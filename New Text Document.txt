@@ -1,0 +1,241 @@
+create table hospital (hos_branch_no int not null primary key,hos_address varchar(200));
+create table ward (ward_id int not null primary key,ward_name varchar(200));
+alter table ward
+add hos_branch_no int;
+ alter table ward 
+add constraint fk_w foreign key(hos_branch_no) references hospital(hos_branch_no) on delete cascade;
+create table room (room_no varchar(200) not null primary key,room_charge varchar(200)); 
+alter table room
+add ward_id int;
+ alter table room 
+add constraint fk_r foreign key(ward_id) references ward(ward_id) on delete cascade; 
+create table bed (bed_no int not null primary key,bed_charge varchar(200));
+alter table bed
+add room_no varchar(200);
+ alter table bed 
+add constraint fk_b foreign key(room_no) references room(room_no) on delete cascade; 
+create table doctor (doc_id int not null primary key,doc_name varchar(200),address varchar(200),phone_no int); 
+alter table doctor
+add hos_branch_no int;
+ alter table doctor 
+add constraint fk_d foreign key( hos_branch_no) references hospital( hos_branch_no) on delete cascade; 
+create table nurse (nur_id int not null primary key,nur_name varchar(200)); 
+create table medicine (med_id int not null primary key,med_name varchar(200),expire_date varchar(200)); 
+create table supplier (s_id int not null primary key,s_name varchar(200),address varchar(200)); 
+create table accountant(acc_id int not null primary key,acc_name varchar(200),phone_no int); 
+create table bill (bill_id int not null primary key,p_id int,bill_date varchar(200),amount int);
+alter table bill
+add acc_id int;
+ alter table bill 
+add constraint fk_b1 foreign key(acc_id) references accountant(acc_id) on delete cascade; 
+create table patient (p_id int not null primary key,p_name varchar(200),address varchar(200),phone_no int); 
+alter table patient
+add bed_no int;
+ alter table patient
+add constraint fk_g foreign key(bed_no) references bed(bed_no) on delete cascade; 
+alter table patient
+add doc_id int;
+ alter table patient 
+add constraint fk_a1 foreign key(doc_id) references doctor(doc_id) on delete cascade;
+alter table patient
+add bill_id int;
+ alter table patient 
+add constraint fk_a2 foreign key(bill_no) references bill(bill_id) on delete cascade; 
+create table nurse_patient
+(
+ p_id int,nur_id int
+);
+ alter table nurse_patient 
+add constraint fk_np foreign key(p_id) references patient(p_id) on delete cascade;
+ alter table nurse_patient 
+add constraint fk_np1 foreign key(nur_id) references nurse(nur_id) on delete cascade; 
+ alter table nurse_patient 
+add constraint ck_np2 primary key(nur_id,p_id);
+
+create table med_patient
+(
+ p_id int,med_id int
+);
+ alter table med_patient 
+add constraint fk_mp foreign key(p_id) references patient(p_id) on delete cascade;
+
+ alter table med_patient 
+add constraint fk_mp1 foreign key(med_id) references medicine(med_id) on delete cascade; 
+ alter table med_patient 
+add constraint ck_mp2 primary key(med_id,p_id);
+create table med_supplier
+(
+ med_id int,s_id int
+);
+alter table med_supplier
+add constraint fk_ms foreign key(med_id) references medicine(med_id) on delete cascade;
+ alter table med_supplier
+add constraint fk_ms1 foreign key(s_id) references supplier(s_id) on delete cascade; 
+ alter table med_supplier
+add constraint ck_ms2 primary key(med_id,s_id);
+create table med_doctor
+(
+ med_id int,doc_id int
+);
+
+ alter table med_doctor
+add constraint fk_md foreign key(med_id) references medicine(med_id) on delete cascade;
+ alter table med_doctor
+add constraint fk_md1 foreign key(doc_id) references doctor(doc_id) on delete cascade; 
+ alter table med_doctor
+add constraint ck_ms3 primary key(med_id,doc_id);
+desc med_doctor;
+insert into hospital(hos_branch_no,hos_address) values(1,'faislabad');
+ insert into hospital(hos_branch_no,hos_address) values(2,'karachi');
+insert into hospital(hos_branch_no,hos_address) values(3,'lahore');
+ insert into hospital(hos_branch_no,hos_address) values(4,'islamabad');
+ insert into hospital(hos_branch_no,hos_address) values(5,'sheikhupura');
+
+insert into ward(ward_id,ward_name,hos_branch_no) values('1','cardiology',2);
+ insert into ward(ward_id,ward_name,hos_branch_no) values('2','neurology',1); 
+insert into ward(ward_id,ward_name,hos_branch_no) values('3','oncology',4);
+ insert into ward(ward_id,ward_name,hos_branch_no) values('4','emergency',5); 
+insert into ward(ward_id,ward_name,hos_branch_no) values('5','maternity',3); 
+
+insert into room(room_no,room_charge,ward_id) 
+values('1s-1','500','1'); 
+insert into room(room_no,room_charge,ward_id) 
+values('1s-2','2500','2'); 
+insert into room(room_no,room_charge,ward_id) 
+values('1s-3','3000','3'); 
+insert into room(room_no,room_charge,ward_id) 
+values('1s-4','5000','4'); 
+insert into room(room_no,room_charge,ward_id) 
+values('1s-5','2500','5'); 
+
+insert into bed(bed_no,bed_charge,room_no) 
+values('1','500','1s-1'); 
+insert into bed(bed_no,bed_charge,room_no) 
+values('2','2500','1s-1'); 
+insert into bed(bed_no,bed_charge,room_no) 
+values('3','3000','1s-1'); 
+insert into bed(bed_no,bed_charge,room_no) 
+values('4','5000','1s-1'); 
+insert into bed(bed_no,bed_charge,room_no) 
+values('5','2500','1s-1');
+
+insert into doctor(doc_id,doc_name,address,phone_no,hos_branch_no) 
+values('1','ali','lahore','123123',4); 
+insert into doctor(doc_id,doc_name,address,phone_no,hos_branch_no) 
+values('2','ahmad','islamabad','123124',3); 
+insert into doctor(doc_id,doc_name,address,phone_no,hos_branch_no) 
+values('3','raza','faislabad','123125',1); 
+insert into doctor(doc_id,doc_name,address,phone_no,hos_branch_no) 
+values('4','zeeshan','sheikhupura','123126',5); 
+insert into doctor(doc_id,doc_name,address,phone_no,hos_branch_no) 
+values('5','khalid','karachi','123127',2); 
+
+insert into patient(p_id,p_name,address,phone_no,bed_no,doc_id,bill_id) 
+values('1','usama','lahore','123123',2,1,4); 
+insert into patient(p_id,p_name,address,phone_no,bed_no,doc_id,bill_id) 
+values('2','hamza','islamabad','123124',3,2,1); 
+insert into patient(p_id,p_name,address,phone_no,bed_no,doc_id,bill_id) 
+values('3','israr','faislabad','123125',4,3,5); 
+insert into patient(p_id,p_name,address,phone_no,bed_no,doc_id,bill_id) 
+values('4','hanan','sheikhupura','123126',5,4,2); 
+insert into patient(p_id,p_name,address,phone_no,bed_no,doc_id,bill_id) 
+values('5','ahmad','karachi','123127',1,5,3);
+desc ward;
+insert into medicine(med_id,med_name,expire_date) 
+values('1','acyclovir','5/4/2021'); 
+insert into medicine(med_id,med_name,expire_date) 
+values('2','abacavir','6/7/2020'); 
+insert into medicine(med_id,med_name,expire_date) 
+values('3','alendronate','8/2/2022'); 
+insert into medicine(med_id,med_name,expire_date) 
+values('4','allopurinoll','9/4/2021'); 
+insert into medicine(med_id,med_name,expire_date) 
+values('5','amifostine','8/5/2020'); 
+ desc bill;
+insert into bill(bill_id,p_id,bill_date,amount,acc_id) 
+values('1','5',1/3/2019,'500','4'); 
+insert into bill(bill_id,p_id,bill_date,amount,acc_id) 
+values('2','4','3/5/2019','1000',3); 
+insert into bill(bill_id,p_id,bill_date,amount,acc_id) 
+values('3','3','3/5/2019','2500',1); 
+insert into bill(bill_id,p_id,bill_date,amount,acc_id) 
+values('4','2','6/4/2019','2000',5); 
+insert into bill(bill_id,p_id,bill_date,amount,acc_id) 
+values('5','1','12/8/2018','1000',2); 
+ 
+insert into nurse(nur_id,nur_name) 
+values('1','hifza'); 
+insert into nurse(nur_id,nur_name) 
+values('2','zainab'); 
+insert into nurse(nur_id,nur_name) 
+values('3','maira'); 
+insert into nurse(nur_id,nur_name) 
+values('4','maryam'); 
+insert into nurse(nur_id,nur_name) 
+values('5','ayesha'); 
+
+insert into accountant(acc_id,acc_name,phone_no) 
+values('1','shahid','12345'); 
+insert into accountant(acc_id,acc_name,phone_no) 
+values('2','javed','123456'); 
+insert into accountant(acc_id,acc_name,phone_no) 
+values('3','khalid','1234567'); 
+insert into accountant(acc_id,acc_name,phone_no) 
+values('4','usman','12345678'); 
+insert into accountant(acc_id,acc_name,phone_no) 
+values('5','usama','123456789'); 
+
+insert into supplier(s_id,s_name,address) 
+values('1','ahmad','lahore'); 
+insert into supplier(s_id,s_name,address) 
+values('2','raza','dg khan'); 
+insert into supplier(s_id,s_name,address) 
+values('3','jahanzaib','sheikhupura'); 
+insert into supplier(s_id,s_name,address) 
+values('4','umer','faislabad'); 
+insert into supplier(s_id,s_name,address) 
+values('5','ameer','lahore'); 
+
+insert into med_doctor(med_id,doc_id)
+values(1,2);
+insert into med_doctor(med_id,doc_id)
+values(2,3); 
+insert into med_doctor(med_id,doc_id)
+values(3,1); 
+insert into med_doctor(med_id,doc_id)
+values(4,5);
+insert into med_doctor(med_id,doc_id)
+values(5,4);
+
+insert into med_patient(med_id,p_id)
+values(1,2);
+insert into med_patient(med_id,p_id)
+values(2,3); 
+insert into med_patient(med_id,p_id)
+values(3,1); 
+insert into med_patient(med_id,p_id)
+values(4,5);
+insert into med_patient(med_id,p_id)
+values(5,4);
+
+insert into med_supplier(med_id,s_id)
+values(1,5);
+insert into med_supplier(med_id,s_id)
+values(2,4); 
+insert into med_supplier(med_id,s_id)
+values(3,3); 
+insert into med_supplier(med_id,s_id)
+values(4,2);
+insert into med_supplier(med_id,s_id)
+values(5,1);
+
+insert into nurse_patient(p_id,nur_id)
+values(1,2);
+insert into nurse_patient(p_id,nur_id)
+values(2,4); 
+insert into nurse_patient(p_id,nur_id)
+values(3,5); 
+insert into nurse_patient(p_id,nur_id)
+values(4,1);
+insert into nurse_patient(p_id,nur_id)
+values(5,3);
